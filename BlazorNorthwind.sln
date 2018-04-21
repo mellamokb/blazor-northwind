@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27520.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorPlayground.Server", "BlazorPlayground\BlazorPlayground.Server\BlazorPlayground.Server.csproj", "{1B6311F0-FF2A-49FE-A28B-CF1FCFDDF513}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorNorthwind.Server", "BlazorNorthwind\BlazorNorthwind.Server\BlazorNorthwind.Server.csproj", "{1B6311F0-FF2A-49FE-A28B-CF1FCFDDF513}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorPlayground.Client", "BlazorPlayground\BlazorPlayground.Client\BlazorPlayground.Client.csproj", "{E0089DCA-0AF3-4A8E-9C53-5461F0CFC5DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorNorthwind.Client", "BlazorNorthwind\BlazorNorthwind.Client\BlazorNorthwind.Client.csproj", "{E0089DCA-0AF3-4A8E-9C53-5461F0CFC5DA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorPlayground.Shared", "BlazorPlayground\BlazorPlayground.Shared\BlazorPlayground.Shared.csproj", "{BEB49FA0-0C8D-4229-9DB3-57ED847EE54B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorNorthwind.Shared", "BlazorNorthwind\BlazorNorthwind.Shared\BlazorNorthwind.Shared.csproj", "{BEB49FA0-0C8D-4229-9DB3-57ED847EE54B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

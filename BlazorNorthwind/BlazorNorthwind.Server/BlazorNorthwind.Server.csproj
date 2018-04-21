@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BlazorPlayground.Client\BlazorPlayground.Client.csproj" />
-    <ProjectReference Include="..\BlazorPlayground.Shared\BlazorPlayground.Shared.csproj" />
+    <ProjectReference Include="..\BlazorNorthwind.Client\BlazorNorthwind.Client.csproj" />
+    <ProjectReference Include="..\BlazorNorthwind.Shared\BlazorNorthwind.Shared.csproj" />
   </ItemGroup>
 
 </Project>

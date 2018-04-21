@@ -5,13 +5,13 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using BlazorPlayground.Shared.Model;
+using BlazorNorthwind.Shared.Model;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using System.Net.Http;
 using System.IO;
 
-namespace BlazorPlayground.Server.Controllers
+namespace BlazorNorthwind.Server.Controllers
 {
     [Route("api/Category")]
     public class CategoryController : Controller

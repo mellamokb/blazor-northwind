@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Blazor.Browser.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace BlazorPlayground.Client
+namespace BlazorNorthwind.Client
 {
     public class Program
     {

@@ -10,7 +10,7 @@ using Newtonsoft.Json.Serialization;
 using System.Linq;
 using System.Net.Mime;
 
-namespace BlazorPlayground.Server
+namespace BlazorNorthwind.Server
 {
     public class Startup
     {

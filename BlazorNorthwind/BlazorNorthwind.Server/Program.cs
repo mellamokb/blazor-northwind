@@ -5,7 +5,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 
-namespace BlazorPlayground.Server
+namespace BlazorNorthwind.Server
 {
     public class Program
     {

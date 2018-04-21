@@ -4,7 +4,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BlazorPlayground.Server
+namespace BlazorNorthwind.Server
 {
     public static class DbUtil
     {

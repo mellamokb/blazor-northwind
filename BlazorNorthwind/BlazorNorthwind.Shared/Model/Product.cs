@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BlazorPlayground.Shared.Model
+namespace BlazorNorthwind.Shared.Model
 {
     public class Product
     {
