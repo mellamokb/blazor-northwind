@@ -1,0 +1,163 @@
+﻿@page "/categories"
+@inject HttpClient Http
+
+@if (CategoryData == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <fieldset>
+        <legend>Search</legend>
+        <div class="form-horizontal">
+            <div class="col-sm-6">
+                <div class="form-group-sm row">
+                    <label class="control-label col-sm-4" for="Namefilter">Name</label>
+                    <div class="col-sm-8"><input class="form-control" type="text" id="NameFilter" name="NameFilter" value="@NameFilter" onchange="@(e => NameFilter_Change(e))" placeholder="Filter Name..." /></div>
+                </div>
+                <div class="form-group-sm row">
+                    <div class="col-sm-offset-4 col-sm-8">
+                        <button class="btn btn-primary" onclick="@Clear_Click">Clear</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group-sm col-sm-6">
+                <label class="control-label col-sm-4" for="DescriptionFilter">Description</label>
+                <div class="col-sm-8"><input class="form-control" type="text" id="DescriptionFilter" name="DescriptionFilter" value="@DescriptionFilter" onchange="@(e => DescriptionFilter_Change(e))" placeholder="Filter Description..." /></div>
+            </div>
+        </div>
+    </fieldset>
+
+    <Pager CurrentPage="@CurrentPage" PageCount="@GetPageCount()" PageChanged="@(e => { CurrentPage = e; StateHasChanged(); })"></Pager>
+
+    <table class="table table-sm table-striped">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">Actions</th>
+                <th scope="col">ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Picture</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var category in GetCategories().Skip((CurrentPage - 1) * PageSize).Take(PageSize))
+            {
+                <tr>
+                    <td>
+                        @if (Edit != null && category.CategoryID == Edit.CategoryID)
+                        {
+                        <a href="javascript:;" onclick="@(async e => await Save_Click())">Save</a> <text>|</text>
+                        <a href="javascript:;" onclick="@(e => Cancel_Click())">Cancel</a>
+                        }
+                        else
+                        {
+                        <a href="javascript:;" onclick="@(e => Edit_Click(category.CategoryID))">Edit</a>
+                        }
+                    </td>
+                    <td scope="row">@category.CategoryID</td>
+                    <td>
+                        @if (Edit != null && category.CategoryID == Edit.CategoryID)
+                        {
+                            <input type="text" bind="Edit.CategoryName" />
+                        }
+                        else
+                        {
+                            @category.CategoryName
+                        }
+                    </td>
+                    <td>
+                        @if (Edit != null && category.CategoryID == Edit.CategoryID)
+                        {
+                            <input type="text" bind="Edit.Description" />
+                        }
+                        else
+                        {
+                            @category.Description
+                        }
+                    </td>
+                    <td><img src="@(string.Format("api/Category/Picture/{0}", category.CategoryID))" /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <Pager CurrentPage="@CurrentPage" PageCount="@GetPageCount()" PageChanged="@(e => { CurrentPage = e; StateHasChanged(); })"></Pager>
+}
+
+@functions {
+    public string NameFilter { get; set; } = "";
+    public string DescriptionFilter { get; set; } = "";
+    public int CurrentPage { get; set; } = 1;
+    public int PageSize { get; set; } = 3;
+
+    public CategoryTransfer[] CategoryData { get; set; }
+    public CategoryTransfer Edit { get; set; } = null;
+
+    protected override async Task OnInitAsync()
+    {
+        CategoryData = await Http.GetJsonAsync<CategoryTransfer[]>("/api/Category/All");
+    }
+
+    protected void NameFilter_Change(UIChangeEventArgs e)
+    {
+        NameFilter = Convert.ToString(e.Value);
+        CurrentPage = 1;
+        Edit = null;
+    }
+
+    protected void DescriptionFilter_Change(UIChangeEventArgs e)
+    {
+        DescriptionFilter = Convert.ToString(e.Value);
+        CurrentPage = 1;
+        Edit = null;
+    }
+
+    protected void Edit_Click(int categoryID)
+    {
+        var category = GetCategories().Single(c => c.CategoryID == categoryID);
+        Edit = new CategoryTransfer { CategoryID = category.CategoryID, CategoryName = category.CategoryName, Description = category.Description };
+    }
+
+    protected async Task Save_Click()
+    {
+        await Http.PutJsonAsync(string.Format("/api/Category/Save/{0}", Edit.CategoryID),
+            new { CategoryID = Edit.CategoryID, CategoryName = Edit.CategoryName, Description = Edit.Description });
+
+        var category = GetCategories().Single(c => c.CategoryID == Edit.CategoryID);
+        category.CategoryName = Edit.CategoryName;
+        category.Description = Edit.Description;
+        Edit = null;
+        StateHasChanged();
+    }
+
+    protected void Cancel_Click()
+    {
+        Edit = null;
+    }
+
+    protected void Clear_Click()
+    {
+        NameFilter = "";
+        DescriptionFilter = "";
+        CurrentPage = 1;
+        Edit = null;
+    }
+
+    protected int GetPageCount()
+    {
+        var count = GetCategories().Count();
+        var pageCount = (count - 1) / PageSize + 1;
+        return pageCount;
+    }
+
+    protected IEnumerable<CategoryTransfer> GetCategories()
+    {
+        foreach (var cat in CategoryData)
+        {
+            if (!string.IsNullOrWhiteSpace(NameFilter) && cat.CategoryName.IndexOf(NameFilter.Trim(), StringComparison.InvariantCultureIgnoreCase) == -1) continue;
+            if (!string.IsNullOrWhiteSpace(DescriptionFilter) && cat.Description.IndexOf(DescriptionFilter.Trim(), StringComparison.InvariantCultureIgnoreCase) == -1) continue;
+            yield return cat;
+        }
+    }
+}
