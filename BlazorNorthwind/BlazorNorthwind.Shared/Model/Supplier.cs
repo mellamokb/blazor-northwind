@@ -18,5 +18,7 @@ namespace BlazorNorthwind.Shared.Model
         public string Phone { get; set; }
         public string Fax { get; set; }
         public string HomePage { get; set; }
+
+        public List<Product> Products { get; set; }
     }
 }

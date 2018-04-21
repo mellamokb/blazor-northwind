@@ -1,15 +1,14 @@
-﻿using Dapper;
+﻿using BlazorNorthwind.Shared.Model;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Threading.Tasks;
-using BlazorNorthwind.Shared.Model;
-using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using System.Text;
-using System.Net.Http;
-using System.IO;
+using System.Threading.Tasks;
 
 namespace BlazorNorthwind.Server.Controllers
 {
@@ -19,11 +18,9 @@ namespace BlazorNorthwind.Server.Controllers
         [HttpGet("All")]
         public IEnumerable<CategoryTransfer> All()
         {
-            var cs = DbUtil.GetConnectionString();
-            using (IDbConnection db = new SqlConnection(cs))
+            using (var ctx = new NorthwindContext())
             {
-                var categories = db.Query<Category>("Select [CategoryID],[CategoryName],[Description],[Picture] From [Categories] C");
-                foreach (var category in categories)
+                foreach (var category in ctx.Categories)
                 {
                     var dto = new CategoryTransfer();
                     dto.CategoryID = category.CategoryID;
@@ -35,13 +32,14 @@ namespace BlazorNorthwind.Server.Controllers
         }
 
         [HttpPut("Save/{id}")]
-        public int Save(int id, [FromBody]Category category)
+        public async Task<int> Save(int id, [FromBody]Category category)
         {
-            var cs = DbUtil.GetConnectionString();
-            using (IDbConnection db = new SqlConnection(cs))
+            using (var ctx = new NorthwindContext())
             {
-                var rowsAffected = db.Execute("Update C Set CategoryName=@CategoryName, Description=@Description From [Categories] C Where [CategoryID]=@CategoryID"
-                    , new { CategoryID = id, CategoryName = category.CategoryName, Description = category.Description });
+                var cat = ctx.Categories.Find(category.CategoryID);
+                cat.CategoryName = category.CategoryName;
+                cat.Description = category.Description;
+                var rowsAffected = await ctx.SaveChangesAsync();
                 return rowsAffected;
             }
         }
@@ -58,10 +56,10 @@ namespace BlazorNorthwind.Server.Controllers
         [HttpGet("Picture/{id}")]
         public FileResult Picture(int id)
         {
-            var cs = DbUtil.GetConnectionString();
-            using (IDbConnection db = new SqlConnection(cs))
+            using (var ctx = new NorthwindContext())
             {
-                var category = db.QuerySingle<Category>("Select [CategoryID],[CategoryName],[Description],[Picture] From [Categories] C Where [CategoryID]=@CategoryID", new { CategoryID = id });
+                var category = ctx.Categories.SingleOrDefault(c => c.CategoryID == id);
+                if (category == null) return null;
 
                 // strip OLE header
                 if (category.Picture.Length > 78 && category.Picture[0] == 21 && category.Picture[1] == 28 && category.Picture[2] == 47)
