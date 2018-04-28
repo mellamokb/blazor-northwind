@@ -3,79 +3,79 @@
 
 <h1>Categories</h1>
 
-@if (CategoryData == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <fieldset>
-        <legend>Search</legend>
-        <div class="form-horizontal">
-            <div class="form-group-sm row">
-                <label class="control-label col-sm-3" for="Filter">Filter</label>
-                <div class="col-sm-6"><input class="form-control" type="text" id="Filter" name="Filter" value="@Filter" onchange="@(e => Filter_Change(e))" placeholder="Filter Name/Description..." /></div>
-                <div class="col-sm-3"><button class="btn btn-primary" onclick="@Reset_Click">Reset</button></div>
-            </div>
+<fieldset>
+    <legend>Search</legend>
+    <div class="form-horizontal">
+        <div class="form-group-sm row">
+            <label class="control-label col-sm-3" for="Filter">Filter</label>
+            <div class="col-sm-6"><input class="form-control" type="text" id="Filter" name="Filter" value="@Filter" onchange="@(e => Filter_Change(e))" placeholder="Filter Name/Description..." /></div>
+            <div class="col-sm-3"><button class="btn btn-primary" onclick="@Reset_Click">Reset</button></div>
         </div>
-    </fieldset>
+    </div>
+</fieldset>
 
-    <Pager CurrentPage="@CurrentPage" PageCount="@GetPageCount()" PageChanged="@(e => { CurrentPage = e; StateHasChanged(); })"></Pager>
+<Pager CurrentPage="@CurrentPage" PageCount="@GetPageCount()" PageChanged="@(e => { CurrentPage = e; StateHasChanged(); })"></Pager>
 
-    <table class="table table-sm table-striped">
-        <thead class="thead-light">
-            <tr>
-                <th scope="col">Actions</th>
-                <th scope="col">ID</th>
-                <th scope="col">Name</th>
-                <th scope="col">Description</th>
-                <th scope="col">Picture</th>
-            </tr>
-        </thead>
-        <tbody>
+<table class="table table-sm table-striped">
+    <thead class="thead-light">
+        <tr>
+            <th scope="col">Actions</th>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Picture</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (CategoryData == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
             @foreach (var category in GetCategories().Skip((CurrentPage - 1) * PageSize).Take(PageSize))
             {
-                <tr>
-                    <td>
-                        @if (Edit != null && category.CategoryID == Edit.CategoryID)
-                        {
-                        <a href="javascript:;" onclick="@(async e => await Save_Click())">Save</a> <text>|</text>
-                        <a href="javascript:;" onclick="@(e => Cancel_Click())">Cancel</a>
-                        }
-                        else
-                        {
-                        <a href="javascript:;" onclick="@(e => Edit_Click(category.CategoryID))">Edit</a>
-                        }
-                    </td>
-                    <td scope="row">@category.CategoryID</td>
-                    <td>
-                        @if (Edit != null && category.CategoryID == Edit.CategoryID)
-                        {
-                            <input type="text" bind="Edit.CategoryName" />
-                        }
-                        else
-                        {
-                            @category.CategoryName
-                        }
-                    </td>
-                    <td>
-                        @if (Edit != null && category.CategoryID == Edit.CategoryID)
-                        {
-                            <input type="text" bind="Edit.Description" />
-                        }
-                        else
-                        {
-                            @category.Description
-                        }
-                    </td>
-                    <td><img src="@(string.Format("api/Category/Picture/{0}", category.CategoryID))" /></td>
-                </tr>
+            <tr>
+                <td>
+                    @if (Edit != null && category.CategoryID == Edit.CategoryID)
+                    {
+                    <a href="javascript:;" onclick="@(async e => await Save_Click())">Save</a> <text>|</text>
+                    <a href="javascript:;" onclick="@(e => Cancel_Click())">Cancel</a>
+                    }
+                    else
+                    {
+                    <a href="javascript:;" onclick="@(e => Edit_Click(category.CategoryID))">Edit</a>
+                    }
+                </td>
+                <td scope="row">@category.CategoryID</td>
+                <td>
+                    @if (Edit != null && category.CategoryID == Edit.CategoryID)
+                    {
+                        <input type="text" bind="Edit.CategoryName" />
+                    }
+                    else
+                    {
+                        @category.CategoryName
+                    }
+                </td>
+                <td>
+                    @if (Edit != null && category.CategoryID == Edit.CategoryID)
+                    {
+                        <input type="text" bind="Edit.Description" />
+                    }
+                    else
+                    {
+                        @category.Description
+                    }
+                </td>
+                <td><img src="@(string.Format("api/Category/Picture/{0}", category.CategoryID))" /></td>
+            </tr>
             }
-        </tbody>
-    </table>
+        }
+    </tbody>
+</table>
 
-    <Pager CurrentPage="@CurrentPage" PageCount="@GetPageCount()" PageChanged="@(e => { CurrentPage = e; StateHasChanged(); })"></Pager>
-}
+<Pager CurrentPage="@CurrentPage" PageCount="@GetPageCount()" PageChanged="@(e => { CurrentPage = e; StateHasChanged(); })"></Pager>
 
 @functions {
     public string Filter { get; set; } = "";
@@ -129,13 +129,14 @@ else
 
     protected int GetPageCount()
     {
-        var count = GetCategories().Count();
+        var count = GetCategories()?.Count() ?? 0;
         var pageCount = (count - 1) / PageSize + 1;
         return pageCount;
     }
 
     protected IEnumerable<CategoryTransfer> GetCategories()
     {
+        if (CategoryData == null) yield break;
         foreach (var cat in CategoryData)
         {
             if (!string.IsNullOrWhiteSpace(Filter)
