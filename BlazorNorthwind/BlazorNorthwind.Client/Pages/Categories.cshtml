@@ -1,6 +1,8 @@
 ﻿@page "/categories"
 @inject HttpClient Http
 
+<h1>Categories</h1>
+
 @if (CategoryData == null)
 {
     <p><em>Loading...</em></p>
@@ -10,20 +12,10 @@ else
     <fieldset>
         <legend>Search</legend>
         <div class="form-horizontal">
-            <div class="col-sm-6">
-                <div class="form-group-sm row">
-                    <label class="control-label col-sm-4" for="Namefilter">Name</label>
-                    <div class="col-sm-8"><input class="form-control" type="text" id="NameFilter" name="NameFilter" value="@NameFilter" onchange="@(e => NameFilter_Change(e))" placeholder="Filter Name..." /></div>
-                </div>
-                <div class="form-group-sm row">
-                    <div class="col-sm-offset-4 col-sm-8">
-                        <button class="btn btn-primary" onclick="@Clear_Click">Clear</button>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group-sm col-sm-6">
-                <label class="control-label col-sm-4" for="DescriptionFilter">Description</label>
-                <div class="col-sm-8"><input class="form-control" type="text" id="DescriptionFilter" name="DescriptionFilter" value="@DescriptionFilter" onchange="@(e => DescriptionFilter_Change(e))" placeholder="Filter Description..." /></div>
+            <div class="form-group-sm row">
+                <label class="control-label col-sm-3" for="Filter">Filter</label>
+                <div class="col-sm-6"><input class="form-control" type="text" id="Filter" name="Filter" value="@Filter" onchange="@(e => Filter_Change(e))" placeholder="Filter Name/Description..." /></div>
+                <div class="col-sm-3"><button class="btn btn-primary" onclick="@Reset_Click">Reset</button></div>
             </div>
         </div>
     </fieldset>
@@ -86,8 +78,7 @@ else
 }
 
 @functions {
-    public string NameFilter { get; set; } = "";
-    public string DescriptionFilter { get; set; } = "";
+    public string Filter { get; set; } = "";
     public int CurrentPage { get; set; } = 1;
     public int PageSize { get; set; } = 3;
 
@@ -99,16 +90,9 @@ else
         CategoryData = await Http.GetJsonAsync<CategoryTransfer[]>("/api/Category/All");
     }
 
-    protected void NameFilter_Change(UIChangeEventArgs e)
+    protected void Filter_Change(UIChangeEventArgs e)
     {
-        NameFilter = Convert.ToString(e.Value);
-        CurrentPage = 1;
-        Edit = null;
-    }
-
-    protected void DescriptionFilter_Change(UIChangeEventArgs e)
-    {
-        DescriptionFilter = Convert.ToString(e.Value);
+        Filter = Convert.ToString(e.Value);
         CurrentPage = 1;
         Edit = null;
     }
@@ -136,10 +120,9 @@ else
         Edit = null;
     }
 
-    protected void Clear_Click()
+    protected void Reset_Click()
     {
-        NameFilter = "";
-        DescriptionFilter = "";
+        Filter = "";
         CurrentPage = 1;
         Edit = null;
     }
@@ -155,8 +138,9 @@ else
     {
         foreach (var cat in CategoryData)
         {
-            if (!string.IsNullOrWhiteSpace(NameFilter) && cat.CategoryName.IndexOf(NameFilter.Trim(), StringComparison.InvariantCultureIgnoreCase) == -1) continue;
-            if (!string.IsNullOrWhiteSpace(DescriptionFilter) && cat.Description.IndexOf(DescriptionFilter.Trim(), StringComparison.InvariantCultureIgnoreCase) == -1) continue;
+            if (!string.IsNullOrWhiteSpace(Filter)
+                && cat.CategoryName.IndexOf(Filter.Trim(), StringComparison.InvariantCultureIgnoreCase) == -1
+                && cat.Description.IndexOf(Filter.Trim(), StringComparison.InvariantCultureIgnoreCase) == -1) continue;
             yield return cat;
         }
     }
