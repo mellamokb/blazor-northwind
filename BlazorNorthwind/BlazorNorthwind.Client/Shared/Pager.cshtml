@@ -32,8 +32,11 @@
 </ul>
 
 @functions {
-    public int CurrentPage { get; set; }
-    public int PageCount { get; set; }
+    [Parameter]
+    int CurrentPage { get; set; }
+    [Parameter]
+    int PageCount { get; set; }
+    [Parameter]
     public Action<int> PageChanged { get; set; }
 
     protected void ChangePage(int newPage)
