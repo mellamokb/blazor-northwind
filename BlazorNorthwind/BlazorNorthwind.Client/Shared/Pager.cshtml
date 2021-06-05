@@ -14,11 +14,11 @@
         var p = i;
         @if (i == CurrentPage)
         {
-        <li class="page-link active"><span class="page-link">@i</span></li>
+        <li class="page-item active"><span class="page-link">@i</span></li>
         }
         else
         {
-        <li class="page-link"><a class="page-link" href="javascript:;" onclick="@(e => ChangePage(p))">@i</a></li>
+        <li class="page-item"><a class="page-link" href="javascript:;" onclick="@(e => ChangePage(p))">@i</a></li>
         }
     }
     @if (CurrentPage < PageCount)
